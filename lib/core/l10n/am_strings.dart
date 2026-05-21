@@ -95,9 +95,21 @@ class AmStrings extends AppStrings {
   @override
   String get settingDailyVerseHint => 'በየቀኑ ጠዋት';
   @override
+  String get notificationDailyVerseTitle => 'የቀኑ ጥቅስ';
+  @override
+  String get notificationDailyVerseTime => 'የዕለቱ ጥቅስ ሰዓት';
+  @override
   String get settingReadingTime => 'የንባብ ሰዓት';
   @override
   String get settingReadingTimeHint => 'የዕለት ንባብ ሰዓት ምረጥ';
+  @override
+  String get notificationReadingTimeTitle => 'ዛሬ ቃሉን ያንብቡ';
+  @override
+  String get notificationReadingTimeBody => 'መተግበሪያውን ክፈት እና ዛሬ ቃሉን ያንብቡ።';
+  @override
+  String get notificationReadingTimeTime => 'የንባብ ማሳወቂያ ሰዓት';
+  @override
+  String get notificationPermissionDenied => 'የማሳወቂያ ፈቃድ ተቋርጧል።';
 
   // ── Books tab ─────────────────────────────────────────────────────────────
   @override

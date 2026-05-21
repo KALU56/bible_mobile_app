@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/settings/app_settings.dart';
 import '../../../../core/theme/app_color_scheme.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -13,13 +14,17 @@ class MeScreen extends StatefulWidget {
 }
 
 class _MeScreenState extends State<MeScreen> {
-  bool _dailyVerse = true;
-
   @override
   Widget build(BuildContext context) {
     final s = L10n.of(context);
     final settings = Settings.of(context);
     final isAmharic = s is AmStrings;
+    final dailyVerseTime =
+        settings.dailyVerseNotificationTime ??
+        const TimeOfDay(hour: 6, minute: 0);
+    final readingTime =
+        settings.readingTimeNotificationTime ??
+        const TimeOfDay(hour: 20, minute: 0);
 
     return SafeArea(
       child: CustomScrollView(
@@ -36,13 +41,18 @@ class _MeScreenState extends State<MeScreen> {
               amLabel: s.sectionReading,
               enLabel: 'READING',
               rows: [
-                _ArrowRow(label: s.settingTranslation, value: s.settingTranslationValue),
+                _ArrowRow(
+                  label: s.settingTranslation,
+                  value: s.settingTranslationValue,
+                ),
                 _ArrowRow(
                   label: s.settingReadingPrefs,
                   hint: s.settingReadingPrefsHint,
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const ReadingSettingsPage()),
+                    MaterialPageRoute(
+                      builder: (_) => const ReadingSettingsPage(),
+                    ),
                   ),
                 ),
                 _ToggleRow(
@@ -69,9 +79,7 @@ class _MeScreenState extends State<MeScreen> {
             child: _SettingsSection(
               amLabel: s.sectionLanguage,
               enLabel: 'LANGUAGE',
-              rows: [
-                _LanguageRow(s: s, isAmharic: isAmharic),
-              ],
+              rows: [_LanguageRow(s: s, isAmharic: isAmharic)],
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
@@ -105,10 +113,143 @@ class _MeScreenState extends State<MeScreen> {
                 _ToggleRow(
                   label: s.settingDailyVerse,
                   hint: s.settingDailyVerseHint,
-                  value: _dailyVerse,
-                  onChanged: (v) => setState(() => _dailyVerse = v),
+                  value: settings.dailyVerseNotificationEnabled,
+                  onChanged: (v) async {
+                    if (v) {
+                      final granted = await NotificationService.instance
+                          .requestPermissions();
+                      if (!context.mounted) return;
+                      if (!granted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(s.notificationPermissionDenied),
+                          ),
+                        );
+                        Settings.update(
+                          context,
+                          settings.copyWith(
+                            dailyVerseNotificationEnabled: false,
+                          ),
+                        );
+                        return;
+                      }
+                    }
+
+                    Settings.update(
+                      context,
+                      settings.copyWith(dailyVerseNotificationEnabled: v),
+                    );
+
+                    if (v) {
+                      await NotificationService.instance.scheduleDailyVerse(
+                        dailyVerseTime,
+                        s.notificationDailyVerseTitle,
+                      );
+                    } else {
+                      await NotificationService.instance.cancel(
+                        NotificationService.dailyVerseId,
+                      );
+                    }
+                  },
                 ),
-                _ArrowRow(label: s.settingReadingTime, hint: s.settingReadingTimeHint),
+                _ArrowRow(
+                  label: s.notificationDailyVerseTime,
+                  value: MaterialLocalizations.of(
+                    context,
+                  ).formatTimeOfDay(dailyVerseTime),
+                  onTap: () async {
+                    final selected = await showTimePicker(
+                      context: context,
+                      initialTime: dailyVerseTime,
+                    );
+                    if (!context.mounted) return;
+                    if (selected == null) return;
+
+                    Settings.update(
+                      context,
+                      settings.copyWith(dailyVerseNotificationTime: selected),
+                    );
+
+                    if (settings.dailyVerseNotificationEnabled) {
+                      await NotificationService.instance.scheduleDailyVerse(
+                        selected,
+                        s.notificationDailyVerseTitle,
+                      );
+                    }
+                  },
+                ),
+                _ToggleRow(
+                  label: s.settingReadingTime,
+                  hint: s.settingReadingTimeHint,
+                  value: settings.readingTimeNotificationEnabled,
+                  onChanged: (v) async {
+                    if (v) {
+                      final granted = await NotificationService.instance
+                          .requestPermissions();
+                      if (!context.mounted) return;
+                      if (!granted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(s.notificationPermissionDenied),
+                          ),
+                        );
+                        Settings.update(
+                          context,
+                          settings.copyWith(
+                            readingTimeNotificationEnabled: false,
+                          ),
+                        );
+                        return;
+                      }
+                    }
+
+                    Settings.update(
+                      context,
+                      settings.copyWith(readingTimeNotificationEnabled: v),
+                    );
+
+                    if (v) {
+                      await NotificationService.instance
+                          .scheduleReadingReminder(
+                            readingTime,
+                            s.notificationReadingTimeTitle,
+                            s.notificationReadingTimeBody,
+                          );
+                    } else {
+                      await NotificationService.instance.cancel(
+                        NotificationService.readingReminderId,
+                      );
+                    }
+                  },
+                ),
+                _ArrowRow(
+                  label: s.notificationReadingTimeTime,
+                  value: MaterialLocalizations.of(
+                    context,
+                  ).formatTimeOfDay(readingTime),
+                  onTap: () async {
+                    final selected = await showTimePicker(
+                      context: context,
+                      initialTime: readingTime,
+                    );
+                    if (!context.mounted) return;
+                    if (selected == null) return;
+
+                    Settings.update(
+                      context,
+                      settings.copyWith(readingTimeNotificationTime: selected),
+                    );
+
+                    if (settings.readingTimeNotificationEnabled) {
+                      await NotificationService.instance
+                          .scheduleReadingReminder(
+                            selected,
+                            s.notificationReadingTimeTitle,
+                            s.notificationReadingTimeBody,
+                          );
+                    }
+                  },
+                ),
               ],
             ),
           ),
@@ -163,96 +304,101 @@ class _ProfileCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GestureDetector(
         onTap: () {},
-        child: Builder(builder: (context) {
-          final c = context.colors;
-          return Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: c.primary,
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: c.primary.withValues(alpha: 0.28),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Avatar
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: c.accent,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  'ን',
-                  style: TextStyle(
-                    fontFamily: AppTypography.shiromeda,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: c.primary,
+        child: Builder(
+          builder: (context) {
+            final c = context.colors;
+            return Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: c.primary,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: c.primary.withValues(alpha: 0.28),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(width: 14),
-              // Name + info + badge
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'ነህምያ ተስፋዬ',
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Avatar
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: c.accent,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'ን',
                       style: TextStyle(
                         fontFamily: AppTypography.shiromeda,
-                        fontSize: 16,
+                        fontSize: 22,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        height: 1.3,
+                        color: c.primary,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'nehemiah@email.com  •  12 ቀናት',
-                      style: AppTypography.amharicCaption.copyWith(
-                        color: Colors.white.withValues(alpha: 0.65),
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: c.accent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        s.meProfileEditBadge,
-                        style: AppTypography.amharicCaption.copyWith(
-                          color: c.primary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
+                  ),
+                  const SizedBox(width: 14),
+                  // Name + info + badge
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'ነህምያ ተስፋዬ',
+                          style: TextStyle(
+                            fontFamily: AppTypography.shiromeda,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            height: 1.3,
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'nehemiah@email.com  •  12 ቀናት',
+                          style: AppTypography.amharicCaption.copyWith(
+                            color: Colors.white.withValues(alpha: 0.65),
+                            fontSize: 11,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: c.accent,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            s.meProfileEditBadge,
+                            style: AppTypography.amharicCaption.copyWith(
+                              color: c.primary,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.white.withValues(alpha: 0.5),
+                    size: 22,
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: Colors.white.withValues(alpha: 0.5),
-                size: 22,
-              ),
-            ],
-          ),
-        );
-        }),
+            );
+          },
+        ),
       ),
     );
   }
@@ -308,9 +454,7 @@ class _SettingsSection extends StatelessWidget {
             border: Border.all(color: c.borderSubtle),
           ),
           clipBehavior: Clip.hardEdge,
-          child: Column(
-            children: _separated(rows, c.borderSubtle),
-          ),
+          child: Column(children: _separated(rows, c.borderSubtle)),
         ),
       ],
     );
@@ -321,11 +465,7 @@ class _SettingsSection extends StatelessWidget {
     for (var i = 0; i < rows.length; i++) {
       result.add(rows[i]);
       if (i < rows.length - 1) {
-        result.add(Divider(
-          color: dividerColor,
-          height: 1,
-          indent: 16,
-        ));
+        result.add(Divider(color: dividerColor, height: 1, indent: 16));
       }
     }
     return result;
@@ -382,11 +522,7 @@ class _ArrowRow extends StatelessWidget {
               ),
               const SizedBox(width: 4),
             ],
-            Icon(
-              Icons.chevron_right_rounded,
-              color: c.textCaption,
-              size: 20,
-            ),
+            Icon(Icons.chevron_right_rounded, color: c.textCaption, size: 20),
           ],
         ),
       ),
