@@ -55,12 +55,15 @@ class VerseActionBar extends StatelessWidget {
           _ActionBtn(
             icon: isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_add_outlined,
             label: s.verseBookmark,
+            semanticLabel: isBookmarked ? s.bookmarkedAction : s.bookmarkAddAction,
+            isSelected: isBookmarked,
             textColor: isBookmarked ? context.colors.primary : textColor,
             onTap: onBookmark,
           ),
           _ActionBtn(
             icon: Icons.format_color_fill_rounded,
             label: s.verseHighlight,
+            semanticLabel: s.highlightVerseAction,
             textColor: highlightColor ?? textColor,
             onTap: onHighlight,
             dot: highlightColor,
@@ -68,18 +71,22 @@ class VerseActionBar extends StatelessWidget {
           _ActionBtn(
             icon: hasNote ? Icons.sticky_note_2_rounded : Icons.sticky_note_2_outlined,
             label: s.verseNote,
+            semanticLabel: hasNote ? s.hasNoteAction : s.noteAddAction,
+            isSelected: hasNote,
             textColor: hasNote ? context.colors.accentDeep : textColor,
             onTap: onNote,
           ),
           _ActionBtn(
             icon: Icons.copy_rounded,
             label: s.verseCopy,
+            semanticLabel: s.copyVerseAction,
             textColor: textColor,
             onTap: onCopy,
           ),
           _ActionBtn(
             icon: Icons.share_outlined,
             label: s.verseShare,
+            semanticLabel: s.shareVerseAction,
             textColor: textColor,
             onTap: onShare,
           ),
@@ -93,58 +100,71 @@ class _ActionBtn extends StatelessWidget {
   const _ActionBtn({
     required this.icon,
     required this.label,
+    required this.semanticLabel,
     required this.textColor,
     required this.onTap,
+    this.isSelected,
     this.dot,
   });
 
   final IconData icon;
   final String label;
+  final String semanticLabel;
   final Color textColor;
   final VoidCallback onTap;
+  final bool? isSelected;
   final Color? dot;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      selected: isSelected,
+      child: GestureDetector(
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, color: textColor, size: 22),
-                if (dot != null)
-                  Positioned(
-                    right: -3,
-                    top: -3,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: dot,
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          width: 1,
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Icon(icon, color: textColor, size: 22),
+                    if (dot != null)
+                      Positioned(
+                        right: -3,
+                        top: -3,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: dot,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              width: 1,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  style: AppTypography.amharicCaption.copyWith(
+                    fontSize: 10,
+                    color: textColor,
                   ),
+                ),
               ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: AppTypography.amharicCaption.copyWith(
-                fontSize: 10,
-                color: textColor,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

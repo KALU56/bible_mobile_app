@@ -163,39 +163,45 @@ class _BookTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAm = L10n.of(context) is AmStrings;
+    final name = isAm ? entry.bookNameAm : entry.bookNameEn;
     return SizedBox(
       width: width,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: onTap,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              // BookCover reserves 10dp past the face for its page edges, so
-              // the face is sized inside that rather than over it.
-              final maxFaceHeight = constraints.maxHeight - _footerBlock - 10;
-              final faceWidth = width - 10;
-              final faceHeight =
-                  math.min(faceWidth * _coverAspect, maxFaceHeight);
+      child: Semantics(
+        button: true,
+        label: '$name, $subtitle',
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: onTap,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // BookCover reserves 10dp past the face for its page edges, so
+                // the face is sized inside that rather than over it.
+                final maxFaceHeight = constraints.maxHeight - _footerBlock - 10;
+                final faceWidth = width - 10;
+                final faceHeight =
+                    math.min(faceWidth * _coverAspect, maxFaceHeight);
 
-              if (faceHeight <= 0) return const SizedBox.shrink();
+                if (faceHeight <= 0) return const SizedBox.shrink();
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _Cover(
-                    entry: entry,
-                    faceWidth: faceWidth,
-                    faceHeight: faceHeight,
-                    subtitle: subtitle,
-                  ),
-                  const Spacer(),
-                  footer,
-                ],
-              );
-            },
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _Cover(
+                      entry: entry,
+                      faceWidth: faceWidth,
+                      faceHeight: faceHeight,
+                      subtitle: subtitle,
+                    ),
+                    const Spacer(),
+                    footer,
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

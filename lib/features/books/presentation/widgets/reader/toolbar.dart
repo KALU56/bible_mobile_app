@@ -75,83 +75,123 @@ class ReaderToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 52,
+      constraints: const BoxConstraints(minHeight: 52),
       color: bgColor,
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       child: Row(
         children: [
           // Menu / back
-          IconButton(
-            icon: Icon(Icons.menu_rounded, size: 22, color: mutedColor),
-            onPressed: onBack,
+          Semantics(
+            button: true,
+            label: s.savedCancel,
+            child: IconButton(
+              icon: Icon(Icons.menu_rounded, size: 22, color: mutedColor),
+              onPressed: onBack,
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+            ),
           ),
           // Chapter dropdown (center)
           Expanded(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: onChapterTap,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Text(
-                      _label,
-                      style: TextStyle(
-                        fontFamily: AppTypography.shiromeda,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: textColor,
+            child: Semantics(
+              button: true,
+              label: '${s.chapterSelectorAction}: $_label',
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: onChapterTap,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          _label,
+                          style: TextStyle(
+                            fontFamily: AppTypography.shiromeda,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: textColor,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                      const SizedBox(width: 2),
+                      Icon(Icons.keyboard_arrow_down_rounded,
+                          size: 18, color: mutedColor),
+                    ],
                   ),
-                  const SizedBox(width: 2),
-                  Icon(Icons.keyboard_arrow_down_rounded,
-                      size: 18, color: mutedColor),
-                ],
+                ),
               ),
             ),
           ),
           // Active edition — opens the chooser
-          EditionChip(
-            dense: true,
-            foreground: accentColor,
-            background: accentColor.withValues(alpha: 0.10),
-            borderColor: accentColor.withValues(alpha: 0.28),
-            sheetTheme: sheetTheme,
+          Semantics(
+            button: true,
+            label: s.editionSwitchTitle,
+            child: EditionChip(
+              dense: true,
+              foreground: accentColor,
+              background: accentColor.withValues(alpha: 0.10),
+              borderColor: accentColor.withValues(alpha: 0.28),
+              sheetTheme: sheetTheme,
+            ),
           ),
           const SizedBox(width: 2),
           if (onAudio != null)
-            IconButton(
-              icon: Icon(Icons.volume_up_rounded, size: 20, color: mutedColor),
-              onPressed: onAudio,
+            Semantics(
+              button: true,
+              label: s.settingAudio,
+              child: IconButton(
+                icon: Icon(Icons.volume_up_rounded, size: 20, color: mutedColor),
+                onPressed: onAudio,
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+              ),
             ),
           // Aa — opens font settings
-          GestureDetector(
-            onTap: onFontSettings,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
-              child: Text(
-                'Aa',
-                style: TextStyle(
-                  fontFamily: AppTypography.nokiaPureheadline,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: mutedColor,
+          Semantics(
+            button: true,
+            label: s.fontSettingsAction,
+            child: GestureDetector(
+              onTap: onFontSettings,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                  child: Center(
+                    child: Text(
+                      'Aa',
+                      style: TextStyle(
+                        fontFamily: AppTypography.nokiaPureheadline,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: mutedColor,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
           // Go to reference — type "ዘፍ 3:16" and jump straight there.
           if (onGoToReference != null)
-            IconButton(
-              icon: Icon(Icons.numbers_rounded, size: 20, color: mutedColor),
-              onPressed: onGoToReference,
+            Semantics(
+              button: true,
+              label: s.searchPrompt,
+              child: IconButton(
+                icon: Icon(Icons.numbers_rounded, size: 20, color: mutedColor),
+                onPressed: onGoToReference,
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+              ),
             ),
           // Search
-          IconButton(
-            icon: Icon(Icons.search_rounded, size: 20, color: mutedColor),
-            onPressed: onSearch,
+          Semantics(
+            button: true,
+            label: s.searchAction,
+            child: IconButton(
+              icon: Icon(Icons.search_rounded, size: 20, color: mutedColor),
+              onPressed: onSearch,
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+            ),
           ),
         ],
       ),

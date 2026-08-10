@@ -575,4 +575,21 @@ abstract class AppStrings {
 
   /// Shown when every candidate port was already taken.
   String get webReaderNoPort;
+
+  // ── Accessibility / Semantics ──────────────────────────────────────────────
+  String get bookmarkAddAction;
+  String get bookmarkedAction;
+  String get noteAddAction;
+  String get hasNoteAction;
+  String get shareVerseAction;
+  String get highlightVerseAction;
+  String get copyVerseAction;
+  String get fontSettingsAction;
+  String get chapterSelectorAction;
+  String get searchAction;
+  String tabHint(int index, int total);
+  String get shareDailyVerseAction;
+  String get continueReadingAction;
+  String get readingStreakAction;
+  String verseSemantics(int verseNumber, String text);
 }

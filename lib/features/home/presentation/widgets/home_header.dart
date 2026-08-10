@@ -91,40 +91,45 @@ class StreakPill extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = L10n.of(context);
     final c = context.colors;
     final useGeez = Settings.of(context).useGeezNumbers;
     final count = ref.watch(readingStreakStateProvider).value?.currentStreak ?? 0;
 
-    return Material(
-      color: c.surface,
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(22),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => StreakScreen(onReadToday: onReadToday),
+    return Semantics(
+      button: true,
+      label: '${s.readingStreakAction}: $count ${s.streakDaysSuffix}',
+      child: Material(
+        color: c.surface,
+        borderRadius: BorderRadius.circular(24),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(24),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => StreakScreen(onReadToday: onReadToday),
+            ),
           ),
-        ),
-        child: Container(
-          height: 44,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: c.borderSubtle),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('🔥', style: TextStyle(fontSize: 15)),
-              const SizedBox(width: 6),
-              Text(
-                useGeez ? toGeez(count) : '$count',
-                style: AppTypography.amharicSubheading.copyWith(
-                  color: c.textOnParchment,
-                  fontSize: 15,
+          child: Container(
+            height: 48,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: c.borderSubtle),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('🔥', style: TextStyle(fontSize: 16)),
+                const SizedBox(width: 6),
+                Text(
+                  useGeez ? toGeez(count) : '$count',
+                  style: AppTypography.amharicSubheading.copyWith(
+                    color: c.textOnParchment,
+                    fontSize: 15,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -142,23 +147,27 @@ class _SignInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = colors;
     final s = L10n.of(context);
-    return Material(
-      color: c.primary,
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(22),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        ),
-        child: Container(
-          height: 44,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          alignment: Alignment.center,
-          child: Text(
-            s.loginButton,
-            style: AppTypography.amharicLabel.copyWith(
-              color: c.textOnDark,
-              fontSize: 13,
+    return Semantics(
+      button: true,
+      label: s.loginButton,
+      child: Material(
+        color: c.primary,
+        borderRadius: BorderRadius.circular(24),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(24),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+          ),
+          child: Container(
+            height: 48,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            alignment: Alignment.center,
+            child: Text(
+              s.loginButton,
+              style: AppTypography.amharicLabel.copyWith(
+                color: c.textOnDark,
+                fontSize: 13,
+              ),
             ),
           ),
         ),
@@ -176,7 +185,7 @@ class _SignInButton extends StatelessWidget {
 class _Avatar extends StatelessWidget {
   const _Avatar({required this.user, required this.colors});
 
-  static const double _size = 44;
+  static const double _size = 48;
 
   final UserProfile user;
   final AppColorScheme colors;
@@ -187,18 +196,22 @@ class _Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = colors;
+    final s = L10n.of(context);
 
-    return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ProfileScreen()),
-      ),
-      child: Container(
-        width: _size,
-        height: _size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: c.borderSubtle),
+    return Semantics(
+      button: true,
+      label: '${s.profileTitle}: ${user.name}',
+      child: GestureDetector(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const ProfileScreen()),
         ),
+        child: Container(
+          width: _size,
+          height: _size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: c.borderSubtle),
+          ),
         clipBehavior: Clip.antiAlias,
         child: user.avatar == null
             ? _InitialsCircle(letter: _initial, colors: c)
@@ -213,6 +226,7 @@ class _Avatar extends StatelessWidget {
                 errorBuilder: (context, error, stack) =>
                     _InitialsCircle(letter: _initial, colors: c),
               ),
+        ),
       ),
     );
   }

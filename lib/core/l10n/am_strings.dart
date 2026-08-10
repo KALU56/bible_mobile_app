@@ -960,4 +960,36 @@ class AmStrings extends AppStrings {
       'ከWiFi ጋር አልተገናኘም። መጀመሪያ ከአውታረ መረብ ጋር ተገናኝ።';
   @override
   String get webReaderNoPort => 'ወደቡ በሌላ መተግበሪያ ተይዟል።';
+
+  // ── Accessibility / Semantics ──────────────────────────────────────────────
+  @override
+  String get bookmarkAddAction => 'ዕልባት ጨምር';
+  @override
+  String get bookmarkedAction => 'ዕልባት ተይዟል';
+  @override
+  String get noteAddAction => 'ማስታወሻ ጻፍ';
+  @override
+  String get hasNoteAction => 'ማስታወሻ አለው';
+  @override
+  String get shareVerseAction => 'ጥቅስ አጋራ';
+  @override
+  String get highlightVerseAction => 'ጥቅስ አጉላ';
+  @override
+  String get copyVerseAction => 'ጥቅስ ቅዳ';
+  @override
+  String get fontSettingsAction => 'የፊደል ቅንጅቶች';
+  @override
+  String get chapterSelectorAction => 'የምዕራፍ መራጭ';
+  @override
+  String get searchAction => 'ፈልግ';
+  @override
+  String tabHint(int index, int total) => 'ገጽ $index ከ $total';
+  @override
+  String get shareDailyVerseAction => 'ጥቅስ አጋራ';
+  @override
+  String get continueReadingAction => 'ንባብ ቀጥል';
+  @override
+  String get readingStreakAction => 'የንባብ ቅደም ተከተል';
+  @override
+  String verseSemantics(int verseNumber, String text) => 'ቁጥር $verseNumber። $text';
 }

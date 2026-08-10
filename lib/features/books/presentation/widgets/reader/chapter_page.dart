@@ -65,6 +65,9 @@ class ReaderChapterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textScaler = MediaQuery.textScalerOf(context);
+    final effectiveFontSize = textScaler.scale(fontSize).clamp(12.0, 48.0);
+
     // Index 0 → ChapterHeader, index i+1 → section[i]
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(
@@ -95,7 +98,7 @@ class ReaderChapterPage extends StatelessWidget {
           section:          chapter.sections[secIdx],
           secIdx:           secIdx,
           chapter:          chapter,
-          fontSize:         fontSize,
+          fontSize:         effectiveFontSize,
           fontFamily:       fontFamily,
           titleFontFamily:  titleFontFamily,
           textColor:        textColor,
@@ -573,44 +576,50 @@ class VerseView extends StatelessWidget {
             ],
           );
 
-    Widget verseWidget = Stack(
-      clipBehavior: Clip.none,
-      children: [
-        GestureDetector(
-          key: isSpotlight ? spotlightKey : null,
-          onTap: () => onVerseTap(verseKey),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            margin: const EdgeInsets.only(bottom: 2),
-            padding: EdgeInsets.fromLTRB(isBookmarked ? 3 : 6, 4, 6, 4),
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(6),
-              border: isBookmarked
-                  ? Border(left: BorderSide(color: accentColor, width: 3))
-                  : null,
+    Widget verseWidget = MergeSemantics(
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          GestureDetector(
+            key: isSpotlight ? spotlightKey : null,
+            onTap: () => onVerseTap(verseKey),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              margin: const EdgeInsets.only(bottom: 2),
+              padding: EdgeInsets.fromLTRB(isBookmarked ? 3 : 6, 4, 6, 4),
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(6),
+                border: isBookmarked
+                    ? Border(left: BorderSide(color: accentColor, width: 3))
+                    : null,
+              ),
+              child: verseBody,
             ),
-            child: verseBody,
           ),
-        ),
-        if (hasNote)
-          Positioned(
-            right: 0,
-            top: 0,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => onNoteTap?.call(verseKey, annotations),
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Icon(
-                  Icons.sticky_note_2_rounded,
-                  size: 13,
-                  color: context.colors.accentDeep,
+          if (hasNote)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Semantics(
+                button: true,
+                label: 'Has note',
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => onNoteTap?.call(verseKey, annotations),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.sticky_note_2_rounded,
+                      size: 13,
+                      color: context.colors.accentDeep,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
 
     if (isSpotlight) {

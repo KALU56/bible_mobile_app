@@ -972,4 +972,36 @@ class EnStrings extends AppStrings {
       'Not connected to WiFi — join a network first.';
   @override
   String get webReaderNoPort => 'The port is in use by another app.';
+
+  // ── Accessibility / Semantics ──────────────────────────────────────────────
+  @override
+  String get bookmarkAddAction => 'Add bookmark';
+  @override
+  String get bookmarkedAction => 'Bookmarked';
+  @override
+  String get noteAddAction => 'Add note';
+  @override
+  String get hasNoteAction => 'Has note';
+  @override
+  String get shareVerseAction => 'Share verse';
+  @override
+  String get highlightVerseAction => 'Highlight verse';
+  @override
+  String get copyVerseAction => 'Copy verse';
+  @override
+  String get fontSettingsAction => 'Font settings';
+  @override
+  String get chapterSelectorAction => 'Chapter selector';
+  @override
+  String get searchAction => 'Search';
+  @override
+  String tabHint(int index, int total) => 'Tab $index of $total';
+  @override
+  String get shareDailyVerseAction => 'Share verse';
+  @override
+  String get continueReadingAction => 'Continue reading';
+  @override
+  String get readingStreakAction => 'Reading streak';
+  @override
+  String verseSemantics(int verseNumber, String text) => 'Verse $verseNumber. $text';
 }

@@ -313,31 +313,40 @@ class _DailyVerseCardState extends ConsumerState<DailyVerseCard> {
                 Row(
                   children: [
                     Expanded(
-                      child: GestureDetector(
-                        onTap: result != null
-                            ? () => _openInReader(context, result)
-                            : null,
-                        child: Text(
-                          reference,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTypography.amharicLabel.copyWith(
-                            color: c.accent,
-                            fontSize: 13,
+                      child: Semantics(
+                        button: true,
+                        label: reference.isNotEmpty ? reference : s.dailyVerseTag,
+                        hint: s.continueReadingAction,
+                        child: GestureDetector(
+                          onTap: result != null
+                              ? () => _openInReader(context, result)
+                              : null,
+                          child: Text(
+                            reference,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.amharicLabel.copyWith(
+                              color: c.accent,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    _IconAction(
-                      icon: Icons.share_outlined,
-                      onTap: result != null ? () => _share(result) : null,
-                      child: _sharing
-                          ? CircularProgressIndicator(
-                              strokeWidth: 2, color: c.textOnDark)
-                          : null,
+                    const SizedBox(width: 4),
+                    Semantics(
+                      button: true,
+                      label: s.shareDailyVerseAction,
+                      child: _IconAction(
+                        icon: Icons.share_outlined,
+                        onTap: result != null ? () => _share(result) : null,
+                        child: _sharing
+                            ? CircularProgressIndicator(
+                                strokeWidth: 2, color: c.textOnDark)
+                            : null,
+                      ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 4),
                     _BookmarkAction(
                       chapterKey: result != null ? _chapterKey(result) : null,
                       verse: result?.verse,
@@ -345,7 +354,7 @@ class _DailyVerseCardState extends ConsumerState<DailyVerseCard> {
                           ? () => _toggleBookmark(result)
                           : null,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 4),
                     _VoiceAction(
                       onTap: result != null ? () => _toggleAudio(result) : null,
                       title: result != null ? _audioTitle(result) : null,
@@ -413,14 +422,14 @@ class _IconAction extends StatelessWidget {
         onTap: onTap ?? () {},
         customBorder: const CircleBorder(),
         child: SizedBox(
-          width: 38,
-          height: 38,
+          width: 48,
+          height: 48,
           child: Center(
             child: SizedBox(
-              width: 18,
-              height: 18,
+              width: 20,
+              height: 20,
               child: child ??
-                  Icon(icon, size: 18, color: context.colors.textOnDark),
+                  Icon(icon, size: 20, color: context.colors.textOnDark),
             ),
           ),
         ),
@@ -447,15 +456,21 @@ class _BookmarkAction extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final s = L10n.of(context);
     var saved = false;
     if (chapterKey != null && verse != null) {
       final annotations = ref.watch(chapterAnnotationsProvider(chapterKey!));
       saved = annotations.value?.isBookmarked(verse!) ?? false;
     }
 
-    return _IconAction(
-      icon: saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-      onTap: onTap,
+    return Semantics(
+      button: true,
+      label: saved ? s.bookmarkedAction : s.bookmarkAddAction,
+      selected: saved,
+      child: _IconAction(
+        icon: saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+        onTap: onTap,
+      ),
     );
   }
 }
@@ -473,6 +488,7 @@ class _VoiceAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = L10n.of(context);
     final audio = AudioService.instance;
 
     return ValueListenableBuilder<String?>(
@@ -487,15 +503,19 @@ class _VoiceAction extends StatelessWidget {
             final playing = isThis &&
                 (state == AudioState.playing || state == AudioState.paused);
 
-            return _IconAction(
-              icon: playing ? Icons.stop_rounded : Icons.volume_up_outlined,
-              onTap: onTap,
-              child: busy
-                  ? CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: context.colors.textOnDark,
-                    )
-                  : null,
+            return Semantics(
+              button: true,
+              label: s.settingAudio,
+              child: _IconAction(
+                icon: playing ? Icons.stop_rounded : Icons.volume_up_outlined,
+                onTap: onTap,
+                child: busy
+                    ? CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: context.colors.textOnDark,
+                      )
+                    : null,
+              ),
             );
           },
         );

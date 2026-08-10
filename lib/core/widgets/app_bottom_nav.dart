@@ -88,44 +88,53 @@ class AppBottomNav extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: SizedBox(
-          height: 64,
-          child: Row(
-            children: List.generate(_icons.length, (i) {
-              final (activeIcon, inactiveIcon) = _icons[i];
-              final isActive = i == selectedIndex;
-              return Expanded(
-                child: InkWell(
-                  onTap: () => onTap(i),
-                  highlightColor: Colors.transparent,
-                  splashColor: splashColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 180),
-                        child: Icon(
-                          isActive ? activeIcon : inactiveIcon,
-                          key: ValueKey(isActive),
-                          size: 24,
-                          color: isActive ? activeColor : inactiveColor,
-                        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 64),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: List.generate(_icons.length, (i) {
+                final (activeIcon, inactiveIcon) = _icons[i];
+                final isActive = i == selectedIndex;
+                return Expanded(
+                  child: Semantics(
+                    button: true,
+                    selected: isActive,
+                    label: labels[i],
+                    hint: s.tabHint(i + 1, _icons.length),
+                    child: InkWell(
+                      onTap: () => onTap(i),
+                      highlightColor: Colors.transparent,
+                      splashColor: splashColor,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 180),
+                            child: Icon(
+                              isActive ? activeIcon : inactiveIcon,
+                              key: ValueKey(isActive),
+                              size: 24,
+                              color: isActive ? activeColor : inactiveColor,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            labels[i],
+                            style: AppTypography.amharicCaption.copyWith(
+                              fontSize: 10,
+                              color: isActive ? activeColor : inactiveColor,
+                              fontWeight:
+                                  isActive ? FontWeight.w700 : FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        labels[i],
-                        style: AppTypography.amharicCaption.copyWith(
-                          fontSize: 10,
-                          color: isActive ? activeColor : inactiveColor,
-                          fontWeight:
-                              isActive ? FontWeight.w700 : FontWeight.w400,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
         ),
       ),
