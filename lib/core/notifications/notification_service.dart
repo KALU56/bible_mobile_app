@@ -18,8 +18,10 @@ import '../../features/books/presentation/pages/reader_screen.dart';
 class NotificationConfig {
   static const int dailyVerseId = 1;
   static const int readingReminderId = 2;
+  static const int fastReminderId = 3;
   static const String dailyVerseChannel = 'daily_verse_channel';
   static const String readingReminderChannel = 'reading_reminder_channel';
+  static const String fastReminderChannel = 'fast_reminder_channel';
   static const String channelGroupDaily = 'daily_reminders';
 
   static const String defaultDailyVerseTitle = ' የዕለቱ ጥቅስ';
@@ -118,7 +120,9 @@ class NotificationService {
       tz.initializeTimeZones();
       final localTimezone = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(localTimezone.identifier));
-      debugPrint('[NotificationService] Timezone configured: ${localTimezone.identifier}');
+      debugPrint(
+        '[NotificationService] Timezone configured: ${localTimezone.identifier}',
+      );
     } catch (e) {
       debugPrint(
         '[NotificationService] Timezone detection failed, using UTC: $e',
@@ -379,6 +383,21 @@ class NotificationService {
     }
   }
 
+  /// Schedule fast start reminder notification.
+  Future<void> scheduleFastReminder({
+    required TimeOfDay time,
+    required String title,
+    required String body,
+  }) async {
+    await scheduleDailyAt(
+      NotificationConfig.fastReminderId,
+      time,
+      title,
+      body,
+      channelId: NotificationConfig.fastReminderChannel,
+    );
+  }
+
   /// Restore all scheduled notifications based on AppSettings.
   /// Call this after reading settings (e.g., on app startup).
   /// Prevents duplicate scheduling by always canceling first.
@@ -410,6 +429,17 @@ class NotificationService {
         );
       } else {
         await cancel(NotificationConfig.readingReminderId);
+      }
+
+      // Restore fasting start notification
+      if (settings.fastReminderEnabled) {
+        await scheduleFastReminder(
+          time: const TimeOfDay(hour: 20, minute: 0),
+          title: 'የጾም ማሳሰቢያ',
+          body: 'ነገ የጾም ቀን ነው፤ ለማስታወስ ያህል::',
+        );
+      } else {
+        await cancel(NotificationConfig.fastReminderId);
       }
 
       debugPrint('[NotificationService] Notifications restored');
@@ -508,8 +538,9 @@ class NotificationService {
 
   /// Defers [_navigatorPushReader] to the next frame.
   void _navigateReaderDeferred(DeepLinkTarget target) {
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => _navigatorPushReader(target));
+    SchedulerBinding.instance.addPostFrameCallback(
+      (_) => _navigatorPushReader(target),
+    );
   }
 
   /// Navigate to home screen.
