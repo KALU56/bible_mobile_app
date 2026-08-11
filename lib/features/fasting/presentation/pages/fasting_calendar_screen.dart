@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kenat/kenat.dart' as kenat;
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/settings/app_settings.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../data/fasts.dart';
 
 class FastingCalendarScreen extends StatefulWidget {
@@ -194,13 +195,12 @@ class _FastingCalendarScreenState extends State<FastingCalendarScreen> {
                       ? kenat.toGeez(dayNum)
                       : dayNum.toString();
 
+                  final c = meContext.colors;
                   final Color cellBg;
                   if (isSelected) {
                     cellBg = theme.colorScheme.primaryContainer;
                   } else if (dayStatus.isFasting) {
-                    cellBg = isDark
-                        ? const Color(0xFF78350F).withValues(alpha: 0.4)
-                        : const Color(0xFFFEF3C7);
+                    cellBg = c.fastingActiveCardBg;
                   } else {
                     cellBg = isDark
                         ? theme.colorScheme.surfaceContainer
@@ -210,9 +210,7 @@ class _FastingCalendarScreenState extends State<FastingCalendarScreen> {
                   final Color textColor = isSelected
                       ? theme.colorScheme.onPrimaryContainer
                       : (dayStatus.isFasting
-                            ? (isDark
-                                  ? const Color(0xFFFDE68A)
-                                  : const Color(0xFF92400E))
+                            ? c.fastingActiveBadge
                             : theme.textTheme.bodyMedium?.color ??
                                   Colors.black);
 
@@ -262,9 +260,7 @@ class _FastingCalendarScreenState extends State<FastingCalendarScreen> {
                                 width: 4,
                                 height: 4,
                                 decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(0xFFF59E0B)
-                                      : const Color(0xFFD97706),
+                                  color: c.fastingActiveBadge,
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -308,12 +304,8 @@ class _FastingCalendarScreenState extends State<FastingCalendarScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: selectedDayStatus.isFasting
-                                ? (isDark
-                                      ? const Color(0xFF78350F)
-                                      : const Color(0xFFFEF3C7))
-                                : (isDark
-                                      ? const Color(0xFF064E3B)
-                                      : const Color(0xFFD1FAE5)),
+                                ? meContext.colors.fastingActiveCardBg
+                                : meContext.colors.fastingInactiveCardBg,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -322,18 +314,15 @@ class _FastingCalendarScreenState extends State<FastingCalendarScreen> {
                                 : l10n.notFasting,
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: selectedDayStatus.isFasting
-                                  ? (isDark
-                                        ? const Color(0xFFFDE68A)
-                                        : const Color(0xFF92400E))
-                                  : (isDark
-                                        ? const Color(0xFFA7F3D0)
-                                        : const Color(0xFF065F46)),
+                                  ? meContext.colors.fastingActiveBadge
+                                  : meContext.colors.fastingInactiveBadge,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 12),
 
                     if (selectedDayStatus.isFasting) ...[
@@ -428,10 +417,10 @@ class _FastingCalendarScreenState extends State<FastingCalendarScreen> {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.bookmark_rounded,
                 size: 18,
-                color: Color(0xFFD97706),
+                color: context.colors.fastingActiveBadge,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -480,11 +469,12 @@ class _FastingCalendarScreenState extends State<FastingCalendarScreen> {
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.upcoming_rounded,
             size: 20,
-            color: Color(0xFF10B981),
+            color: context.colors.fastingInactiveBadge,
           ),
+
           const SizedBox(width: 12),
           Expanded(
             child: Column(
