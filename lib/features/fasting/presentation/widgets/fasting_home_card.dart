@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kenat/kenat.dart' as kenat;
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/settings/app_settings.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../data/fasts.dart';
 import '../pages/fasting_calendar_screen.dart';
 
@@ -10,6 +12,7 @@ class FastingHomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext meContext) {
+    final c = meContext.colors;
     final l10n = L10n.of(meContext);
     final isAmharic = l10n is AmStrings;
     final settings = Settings.of(meContext);
@@ -48,7 +51,7 @@ class FastingHomeCard extends StatelessWidget {
       subtitleText = '$remainingStr ${l10n.daysRemaining}';
 
       iconData = Icons.church_rounded;
-      badgeColor = isDark ? const Color(0xFFD97706) : const Color(0xFFB45309);
+      badgeColor = c.fastingActiveBadge;
     } else {
       statusHeader = l10n.notFasting;
       if (status.next != null) {
@@ -71,22 +74,31 @@ class FastingHomeCard extends StatelessWidget {
         subtitleText = '';
       }
       iconData = Icons.calendar_today_rounded;
-      badgeColor = isDark ? const Color(0xFF10B981) : const Color(0xFF059669);
+      badgeColor = c.fastingInactiveBadge;
     }
 
-    final cardBg = isDark
-        ? Theme.of(meContext).colorScheme.surfaceContainerHigh
-        : Theme.of(meContext).colorScheme.surface;
+    final cardBg = c.surfaceDim;
+    final cardBorder = Border.all(color: c.borderSubtle);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
-      child: Material(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(10.0),
-        elevation: isDark ? 0 : 1,
-        shadowColor: Colors.black.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(16.0),
+        border: cardBorder,
+        boxShadow: [
+          BoxShadow(
+            color: c.scrim.withValues(alpha: isDark ? 0.2 : 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16.0),
         child: InkWell(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(16.0),
           onTap: () {
             Navigator.of(meContext).push(
               MaterialPageRoute<void>(
@@ -95,23 +107,23 @@ class FastingHomeCard extends StatelessWidget {
             );
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10.0,
-              vertical: 6.0,
-            ),
+            padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
+                // Icon Box matching _FreezeCard style
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
-                    color: badgeColor.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
+                    color: c.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: c.borderSubtle),
                   ),
-                  child: Icon(iconData, color: badgeColor, size: 16),
+                  alignment: Alignment.center,
+                  child: Icon(iconData, color: badgeColor, size: 20),
                 ),
-                const SizedBox(width: 10),
-
+                const SizedBox(width: 12),
+                // Content
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,70 +131,62 @@ class FastingHomeCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            statusHeader,
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: badgeColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: badgeColor.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              statusHeader,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: badgeColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
                             ),
                           ),
                           const Spacer(),
                           Text(
                             l10n.fastingCalendarTitle,
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.textTheme.bodySmall?.color
-                                  ?.withValues(alpha: 0.6),
+                            style: AppTypography.amharicCaption.copyWith(
+                              color: c.textMuted,
                               fontSize: 11,
                             ),
                           ),
                           const SizedBox(width: 2),
                           Icon(
                             Icons.chevron_right_rounded,
-                            size: 14,
-                            color: theme.textTheme.bodySmall?.color?.withValues(
-                              alpha: 0.6,
-                            ),
+                            size: 16,
+                            color: c.textMuted,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          if (fastTitle.isNotEmpty)
-                            Flexible(
-                              child: Text(
-                                fastTitle,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          if (fastTitle.isNotEmpty && subtitleText.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6.0,
-                              ),
-                              child: Text(
-                                '•',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.textTheme.bodySmall?.color
-                                      ?.withValues(alpha: 0.5),
-                                ),
-                              ),
-                            ),
-                          if (subtitleText.isNotEmpty)
-                            Text(
-                              subtitleText,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.textTheme.bodySmall?.color
-                                    ?.withValues(alpha: 0.7),
-                              ),
-                            ),
-                        ],
-                      ),
+                      const SizedBox(height: 6),
+                      if (fastTitle.isNotEmpty)
+                        Text(
+                          fastTitle,
+                          style: AppTypography.amharicLabel.copyWith(
+                            color: c.textOnParchment,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      if (subtitleText.isNotEmpty)
+                        Text(
+                          subtitleText,
+                          style: AppTypography.amharicCaption.copyWith(
+                            color: c.textMuted,
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                     ],
                   ),
                 ),
