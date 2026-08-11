@@ -93,35 +93,41 @@ class StreakPill extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.colors;
     final useGeez = Settings.of(context).useGeezNumbers;
-    final count = ref.watch(readingStreakStateProvider).value?.currentStreak ?? 0;
+    final count =
+        ref.watch(readingStreakStateProvider).value?.currentStreak ?? 0;
+
+    final pillBg = c.surfaceDim;
+    final pillBorder = Border.all(color: c.borderSubtle);
 
     return Material(
-      color: c.surface,
-      borderRadius: BorderRadius.circular(22),
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(20),
       child: InkWell(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(20),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => StreakScreen(onReadToday: onReadToday),
           ),
         ),
         child: Container(
-          height: 44,
+          height: 38,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: c.borderSubtle),
+            color: pillBg,
+            borderRadius: BorderRadius.circular(20),
+            border: pillBorder,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('🔥', style: TextStyle(fontSize: 15)),
-              const SizedBox(width: 6),
+              const Text('🔥', style: TextStyle(fontSize: 14)),
+              const SizedBox(width: 5),
               Text(
                 useGeez ? toGeez(count) : '$count',
                 style: AppTypography.amharicSubheading.copyWith(
                   color: c.textOnParchment,
-                  fontSize: 15,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -144,21 +150,23 @@ class _SignInButton extends StatelessWidget {
     final s = L10n.of(context);
     return Material(
       color: c.primary,
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(19),
+      elevation: 1,
       child: InkWell(
-        borderRadius: BorderRadius.circular(22),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        ),
+        borderRadius: BorderRadius.circular(19),
+        onTap: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const LoginScreen())),
         child: Container(
-          height: 44,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          height: 38,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           alignment: Alignment.center,
           child: Text(
             s.loginButton,
             style: AppTypography.amharicLabel.copyWith(
               color: c.textOnDark,
-              fontSize: 13,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -189,9 +197,9 @@ class _Avatar extends StatelessWidget {
     final c = colors;
 
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ProfileScreen()),
-      ),
+      onTap: () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const ProfileScreen())),
       child: Container(
         width: _size,
         height: _size,
