@@ -93,13 +93,16 @@ class _TopicCard extends StatelessWidget {
       width: width,
       child: Material(
         color: c.surfaceDim,
-        borderRadius: BorderRadius.circular(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: c.borderSubtle),
+        ),
+
         clipBehavior: Clip.antiAlias,
+
         child: InkWell(
           onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => TopicDetailScreen(topic: topic),
-            ),
+            MaterialPageRoute(builder: (_) => TopicDetailScreen(topic: topic)),
           ),
           child: Stack(
             fit: StackFit.expand,
@@ -108,7 +111,8 @@ class _TopicCard extends StatelessWidget {
                 Image.asset(
                   topic.image!,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => _IconFallback(topic: topic, colors: c),
+                  errorBuilder: (_, _, _) =>
+                      _IconFallback(topic: topic, colors: c),
                 )
               else
                 _IconFallback(topic: topic, colors: c),
