@@ -17,6 +17,7 @@ class AppSettings {
     this.cardAspectRatio = 0,
     this.dailyVerseNotificationEnabled = false,
     this.readingTimeNotificationEnabled = false,
+    this.fastReminderEnabled = false,
     this.dailyVerseNotificationTime,
     this.readingTimeNotificationTime,
     this.hasSeenOnboarding = false,
@@ -60,6 +61,9 @@ class AppSettings {
   /// Whether reading time reminder notifications are enabled.
   final bool readingTimeNotificationEnabled;
 
+  /// Whether fast start evening reminders are enabled.
+  final bool fastReminderEnabled;
+
   /// Preferred time for the daily verse notification (nullable, defaults to 6:00 AM if null).
   final TimeOfDay? dailyVerseNotificationTime;
 
@@ -99,6 +103,7 @@ class AppSettings {
     int? cardAspectRatio,
     bool? dailyVerseNotificationEnabled,
     bool? readingTimeNotificationEnabled,
+    bool? fastReminderEnabled,
     TimeOfDay? dailyVerseNotificationTime,
     TimeOfDay? readingTimeNotificationTime,
     bool? hasSeenOnboarding,
@@ -127,6 +132,7 @@ class AppSettings {
             dailyVerseNotificationEnabled ?? this.dailyVerseNotificationEnabled,
         readingTimeNotificationEnabled:
             readingTimeNotificationEnabled ?? this.readingTimeNotificationEnabled,
+        fastReminderEnabled: fastReminderEnabled ?? this.fastReminderEnabled,
         dailyVerseNotificationTime:
             dailyVerseNotificationTime ?? this.dailyVerseNotificationTime,
         readingTimeNotificationTime:
@@ -157,6 +163,7 @@ class AppSettings {
         'cardAspectRatio': cardAspectRatio,
         'dailyVerseNotificationEnabled': dailyVerseNotificationEnabled,
         'readingTimeNotificationEnabled': readingTimeNotificationEnabled,
+        'fastReminderEnabled': fastReminderEnabled,
         'hasSeenOnboarding': hasSeenOnboarding,
         'hasSeenReaderHint': hasSeenReaderHint,
         'collectionHintViews': collectionHintViews,
@@ -184,6 +191,7 @@ class AppSettings {
             map['dailyVerseNotificationEnabled'] as bool? ?? false,
         readingTimeNotificationEnabled:
             map['readingTimeNotificationEnabled'] as bool? ?? false,
+        fastReminderEnabled: map['fastReminderEnabled'] as bool? ?? false,
         hasSeenOnboarding: map['hasSeenOnboarding'] as bool? ?? false,
         hasSeenReaderHint: map['hasSeenReaderHint'] as bool? ?? false,
         collectionHintViews: map['collectionHintViews'] as int? ??
@@ -214,6 +222,7 @@ class AppSettings {
       other.cardAspectRatio == cardAspectRatio &&
       other.dailyVerseNotificationEnabled == dailyVerseNotificationEnabled &&
       other.readingTimeNotificationEnabled == readingTimeNotificationEnabled &&
+      other.fastReminderEnabled == fastReminderEnabled &&
       other.dailyVerseNotificationTime == dailyVerseNotificationTime &&
       other.readingTimeNotificationTime == readingTimeNotificationTime &&
       other.hasSeenOnboarding == hasSeenOnboarding &&
@@ -241,6 +250,7 @@ class AppSettings {
         cardAspectRatio,
         dailyVerseNotificationEnabled,
         readingTimeNotificationEnabled,
+        fastReminderEnabled,
         dailyVerseNotificationTime,
         readingTimeNotificationTime,
         hasSeenOnboarding,
@@ -252,6 +262,7 @@ class AppSettings {
         textAlign,
         keepScreenOn,
       ]);
+
 }
 
 class Settings extends InheritedNotifier<ValueNotifier<AppSettings>> {
