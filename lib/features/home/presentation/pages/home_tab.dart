@@ -5,6 +5,7 @@ import '../widgets/home_header.dart';
 import '../widgets/daily_verse_card.dart';
 import '../widgets/continue_reading_section.dart';
 import '../../../topics/presentation/widgets/topics_section.dart';
+import '../../../fasting/presentation/widgets/fasting_home_card.dart';
 
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key, required this.onSwitchToBooks});
@@ -36,22 +37,20 @@ class HomeTab extends StatelessWidget {
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        HomeHeader(
-          dateLabel: dateLabel,
-          onReadToday: onSwitchToBooks,
-        ),
-        const SizedBox(height: 12),
+        HomeHeader(dateLabel: dateLabel, onReadToday: onSwitchToBooks),
+        const SizedBox(height: 6),
         const DailyVerseCard(),
-        const SizedBox(height: 14),
+        const FastingHomeCard(),
+        const SizedBox(height: 4),
         // Continue reading gets the larger share: its card carries progress
         // and a call to action, where a topic is just a picture and a word.
         Expanded(
           flex: 5,
           child: ContinueReadingSection(onOpenBooksTab: onSwitchToBooks),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 6),
         const Expanded(flex: 4, child: TopicsSection()),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
       ],
     );
 
