@@ -1025,4 +1025,37 @@ class EnStrings extends AppStrings {
       'Not connected to WiFi — join a network first.';
   @override
   String get webReaderNoPort => 'The port is in use by another app.';
+
+  // ── Fasting ─────────────────────────────────────────────────────────────
+  @override
+  String get fastingCalendarTitle => 'Fasting Calendar';
+  @override
+  String get fastingToday => 'Today is a fast';
+  @override
+  String get notFasting => 'Not a fast day';
+  @override
+  String get daysRemaining => 'days remaining';
+  @override
+  String get fastBeginsTomorrow => 'begins tomorrow';
+  @override
+  String get fastNameAbiyTsome => 'Great Lent';
+  @override
+  String get fastNameTsomeHawaryat => 'Fast of the Apostles';
+  @override
+  String get fastNameTsomeNebiyat => 'Fast of the Prophets';
+  @override
+  String get fastNameNineveh => 'Fast of Nineveh';
+  @override
+  String get fastNameFilseta => 'Fast of the Assumption';
+  @override
+  String get fastNameTsomeDihnet => 'Fast of Salvation';
+  @override
+  String get fastNameWednesdayFriday => 'Wednesday and Friday';
+  @override
+  String get fastNameGahad => 'Fast of Gahad';
+  @override
+  String get settingFastReminder => 'Fasting Reminder';
+  @override
+  String get settingFastReminderHint => 'Remind me the evening before a major fast';
 }
+

@@ -1012,4 +1012,37 @@ class AmStrings extends AppStrings {
       'ከWiFi ጋር አልተገናኘም። መጀመሪያ ከአውታረ መረብ ጋር ተገናኝ።';
   @override
   String get webReaderNoPort => 'ወደቡ በሌላ መተግበሪያ ተይዟል።';
+
+  // ── Fasting ─────────────────────────────────────────────────────────────
+  @override
+  String get fastingCalendarTitle => 'የጾም ቀን መቁጠሪያ';
+  @override
+  String get fastingToday => 'ጾም ነው';
+  @override
+  String get notFasting => 'ጾም አይደለም';
+  @override
+  String get daysRemaining => 'ቀን ቀረው';
+  @override
+  String get fastBeginsTomorrow => 'ነገ ይጀምራል';
+  @override
+  String get fastNameAbiyTsome => 'ዐቢይ ጾም';
+  @override
+  String get fastNameTsomeHawaryat => 'ጾመ ሐዋርያት';
+  @override
+  String get fastNameTsomeNebiyat => 'ጾመ ነቢያት';
+  @override
+  String get fastNameNineveh => 'ጾመ ነነዌ';
+  @override
+  String get fastNameFilseta => 'ጾመ ፍልሰታ';
+  @override
+  String get fastNameTsomeDihnet => 'ጾመ ድኅነት';
+  @override
+  String get fastNameWednesdayFriday => 'አርብ እና ረቡዕ';
+  @override
+  String get fastNameGahad => 'ጾመ ገሃድ';
+  @override
+  String get settingFastReminder => 'የጾም ማስታወሻ';
+  @override
+  String get settingFastReminderHint => 'ከጾም በፊት ማስታወሻ ይላኩልኝ';
 }
+
